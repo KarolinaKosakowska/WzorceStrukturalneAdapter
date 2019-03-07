@@ -5,14 +5,36 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using OldApp.Models;
+using OldApp.Models.Adapter;
+using OldApp.Models.Target;
 
 namespace OldApp.Controllers
 {
     public class HomeController : Controller
     {
+        IStudentRepo adapter = new StudentRepo(new BazaDanychContext());
+        //BazaDanychContext baza = new BazaDanychContext();
         public IActionResult Index()
         {
-            return View();
+            //List<Student> model = new BazaDanychContext().Studenci.ToList();
+            return View(model);
+        }
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+            var model = baza.Studenci.Where(s => s.Id == id).FirstOrDefault();
+            baza.Studenci.Remove(model);
+            return RedirectToAction(nameof(Index));
+        }
+        [HttpPost]
+        public IActionResult Add(Student student)
+        {
+            new BazaDanychContext().Studenci.Add(student);
+            return RedirectToAction(nameof(Index));
+        }
+        public IActionResult Add()
+        {
+            return View("Dodaj");
         }
 
         public IActionResult About()
